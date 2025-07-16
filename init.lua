@@ -677,36 +677,10 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {
-          cmd = {
-            'clangd',
-            '--clang-tidy',
-            '--header-insertion=iwyu',
-            '--function-arg-placeholders',
-            '--fallback-style=llvm',
-          },
-          init_options = {
-            usePlaceholders = true,
-            completeUnimported = true,
-            clangdFileStatus = true,
-          },
-        },
-        -- gopls = {},
-        pyright = {
-          cmd = {"pyright-langserver", "--stdio"},
-          filetypes = {"python"},
-          root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "pyrightconfig.json", ".git" },
-          settings =
-            {
-              python = {
-                analysis = {
-                  autoSearchPaths = true,
-                  diagnosticMode = "openFilesOnly",
-                  useLibraryCodeForTypes = true
-                }
-              }
-            },
-        },
+        ruff = {},
+        clangd = {},
+        lua_ls = {},
+        pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -717,22 +691,46 @@ require('lazy').setup({
         -- ts_ls = {},
         --
 
-        lua_ls = {
-          -- cmd = { ... },
-          -- filetypes = { ... },
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
+        -- lua_ls = {
+        --   -- cmd = { ... },
+        --   -- filetypes = { ... },
+        --   -- capabilities = {},
+        --   settings = {
+        --     Lua = {
+        --       completion = {
+        --         callSnippet = 'Replace',
+        --       },
+        --       -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+        --       -- diagnostics = { disable = { 'missing-fields' } },
+        --     },
+        --   },
+        -- },
       }
 
+      vim.lsp.config('clangd', {
+        cmd = {
+          'clangd',
+          '--background-index', -- Index project in background
+          '--clang-tidy',
+          '--header-insertion=iwyu',
+          '--function-arg-placeholders',
+          '--fallback-style=llvm',
+          '--completion-style=detailed', -- More detailed completion info
+          '--all-scopes-completion', -- Show completions from all scopes
+          '--cross-file-rename', -- Enable cross-file renaming
+          '--log=verbose', -- More verbose logging (optional)
+          '--pretty', -- Pretty-print diagnostics
+          '-j=4', -- Use 4 threads for indexing
+        },
+        init_options = {
+          usePlaceholders = true,
+          completeUnimported = true,
+          clangdFileStatus = true,
+        },
+      })
+      vim.lsp.enable 'clangd'
+      vim.lsp.enable 'ruff'
+      vim.lsp.enable 'pyright'
       -- Ensure the servers and tools above are installed
       --
       -- To check the current status of installed tools and/or manually install

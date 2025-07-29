@@ -211,6 +211,13 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+-- Telescope file browser
+vim.keymap.set('n', '<space>fb', function()
+  require('telescope').extensions.file_browser.file_browser {
+    path = vim.fn.expand '%:p:h', -- Use vim.fn.expand to get the path
+    select_buffer = true,
+  }
+end)
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -252,9 +259,12 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  {
+    'nvim-telescope/telescope-file-browser.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
+  },
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
-
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
@@ -799,6 +809,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        python = { 'ruff_format' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
